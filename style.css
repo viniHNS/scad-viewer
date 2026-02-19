@@ -698,6 +698,57 @@ body {
   flex-shrink: 0;
 }
 
+/* ══════════════ FOOTER ══════════════ */
+#app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 24px;
+  border-top: 1px solid var(--border-glass);
+  background: rgba(12, 14, 20, 0.85);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  z-index: 10;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.heart-link {
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.heart-link:hover {
+  transform: scale(1.3);
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.73rem;
+}
+
+.footer-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-muted);
+  transition: color var(--transition), transform var(--transition);
+}
+
+.footer-icon:hover {
+  color: var(--accent-cyan);
+  transform: translateY(-1px);
+}
+
 /* ══════════════ RESPONSIVE ══════════════ */
 @media (max-width: 800px) {
   #app-main {
