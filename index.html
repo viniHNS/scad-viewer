@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCAD Web Viewer — OpenSCAD no Navegador</title>
+  <meta name="description"
+    content="Compile e visualize arquivos OpenSCAD (.scad) diretamente no navegador usando WebAssembly. Nenhuma instalação necessária." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+
+<body>
+  <!-- ───── Header ───── -->
+  <header id="app-header">
+    <div class="header-brand">
+      <svg class="logo-icon" viewBox="0 0 32 32" width="28" height="28" fill="none">
+        <rect x="4" y="4" width="24" height="24" rx="4" stroke="url(#grd)" stroke-width="2.5" />
+        <path d="M10 22 L16 10 L22 22" stroke="url(#grd)" stroke-width="2.2" stroke-linecap="round"
+          stroke-linejoin="round" fill="none" />
+        <defs>
+          <linearGradient id="grd" x1="0" y1="0" x2="32" y2="32">
+            <stop stop-color="#06b6d4" />
+            <stop offset="1" stop-color="#a855f7" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <h1>SCAD <span class="accent">Web</span></h1>
+    </div>
+    <p class="header-tagline">Compile &amp; visualize OpenSCAD no navegador</p>
+  </header>
+
+  <!-- ───── Main Layout ───── -->
+  <main id="app-main">
+    <!-- Left panel: upload + tabs -->
+    <aside id="panel-left">
+      <!-- Upload zone -->
+      <section id="upload-zone" class="card glass" tabindex="0" role="button" aria-label="Upload .scad file">
+        <div class="upload-content">
+          <div class="upload-icon-wrap">
+            <svg class="upload-icon" viewBox="0 0 48 48" width="40" height="40" fill="none">
+              <path d="M24 32V12M24 12L16 20M24 12L32 20" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M8 30v6a4 4 0 004 4h24a4 4 0 004-4v-6" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" />
+            </svg>
+          </div>
+          <p class="upload-label">Arraste um arquivo <strong>.scad</strong> aqui</p>
+          <p class="upload-sub">ou clique para selecionar</p>
+        </div>
+        <input type="file" id="file-input" accept=".scad" hidden />
+      </section>
+
+      <!-- File info + compile -->
+      <div id="file-info" class="card glass" hidden>
+        <div class="file-info-row">
+          <span class="file-name" id="file-name">—</span>
+          <span class="file-size" id="file-size"></span>
+        </div>
+        <button id="btn-compile" class="btn-primary" disabled>
+          <span class="btn-label">Compilar</span>
+          <span class="spinner" hidden></span>
+        </button>
+      </div>
+
+      <!-- Tabbed panel: Parameters / Console -->
+      <div id="tab-container" class="card glass">
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="params">
+            <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+              <path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+            Parâmetros
+          </button>
+          <button class="tab-btn" data-tab="console">
+            <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+              <path d="M4 6l4 4-4 4M10 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+            Console
+          </button>
+        </div>
+
+        <!-- Parameters tab -->
+        <div class="tab-content active" id="tab-params">
+          <div id="params-empty" class="params-placeholder">
+            <p>Carregue um arquivo .scad para ver os parâmetros editáveis.</p>
+            <p class="params-hint">Dica: use variáveis no topo do .scad com comentários para configurar parâmetros.<br>
+              Ex: <code>altura = 10; // [1:100]</code></p>
+          </div>
+          <div id="params-list" hidden></div>
+        </div>
+
+        <!-- Console tab -->
+        <div class="tab-content" id="tab-console">
+          <div class="console-toolbar">
+            <button id="btn-clear-log" class="btn-icon" title="Limpar console">
+              <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+                <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+              Limpar
+            </button>
+          </div>
+          <pre id="log-output"><code>Pronto. Aguardando arquivo .scad…</code></pre>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right panel: 3D viewer -->
+    <section id="viewer-panel">
+      <div id="viewer-container">
+        <canvas id="viewer-canvas"></canvas>
+        <div id="viewer-overlay" class="viewer-placeholder">
+          <svg viewBox="0 0 64 64" width="56" height="56" fill="none">
+            <path d="M32 6L58 20v24L32 58 6 44V20L32 6z" stroke="currentColor" stroke-width="2" opacity="0.25" />
+            <path d="M32 6L58 20 32 34 6 20 32 6z" stroke="currentColor" stroke-width="2" opacity="0.35" />
+            <path d="M32 34v24" stroke="currentColor" stroke-width="2" opacity="0.25" />
+          </svg>
+          <p>O modelo 3D aparecerá aqui</p>
+        </div>
+        <!-- Compile progress -->
+        <div id="compile-progress">
+          <div class="progress-spinner"></div>
+          <p>Compilando…</p>
+        </div>
+      </div>
+      <!-- Viewer toolbar -->
+      <div id="viewer-toolbar">
+        <button id="btn-reset-cam" class="btn-tool" title="Resetar câmera">
+          <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+            <path d="M3 10a7 7 0 1114 0 7 7 0 01-14 0z" stroke="currentColor" stroke-width="1.6" />
+            <path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+          </svg>
+          Resetar
+        </button>
+        <button id="btn-download" class="btn-tool" title="Baixar STL" disabled>
+          <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+            <path d="M10 3v10M10 13l-4-4M10 13l4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M3 14v2a1 1 0 001 1h12a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round" />
+          </svg>
+          Baixar STL
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+
+</html>
