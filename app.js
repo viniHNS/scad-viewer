@@ -27,6 +27,9 @@ const paramsEmpty = document.getElementById('params-empty');
 const paramsList = document.getElementById('params-list');
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
+const tipsModal = document.getElementById('tips-modal');
+const btnTips = document.getElementById('btn-tips');
+const btnCloseTips = document.getElementById('btn-close-tips');
 
 /* ─────────────── State ─────────────── */
 let currentScadSource = null;   // original source from file
@@ -45,6 +48,13 @@ tabBtns.forEach(btn => {
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     });
 });
+
+/* ═══════════════ TIPS MODAL ═══════════════ */
+
+btnTips.addEventListener('click', () => { tipsModal.hidden = false; });
+btnCloseTips.addEventListener('click', () => { tipsModal.hidden = true; });
+tipsModal.addEventListener('click', (e) => { if (e.target === tipsModal) tipsModal.hidden = true; });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !tipsModal.hidden) tipsModal.hidden = true; });
 
 /* ═══════════════ LOGGING ═══════════════ */
 

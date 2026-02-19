@@ -43,8 +43,82 @@
       </svg>
       <h1>SCAD <span class="accent">Web</span></h1>
     </div>
-    <p class="header-tagline">Compile &amp; visualize OpenSCAD no navegador</p>
+    <div class="header-right">
+      <p class="header-tagline">Compile &amp; visualize OpenSCAD no navegador</p>
+      <button id="btn-tips" class="btn-tips" title="Dicas">
+        <svg viewBox="0 0 20 20" width="15" height="15" fill="none">
+          <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.6" />
+          <path d="M10 9v4M10 6.5v.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        Dicas
+      </button>
+    </div>
   </header>
+
+  <!-- ───── Tips Modal ───── -->
+  <div id="tips-modal" class="modal-overlay" hidden>
+    <div class="modal-card glass">
+      <div class="modal-header">
+        <h2>💡 Dicas</h2>
+        <button id="btn-close-tips" class="btn-icon modal-close" title="Fechar">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="none">
+            <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="tip-item">
+          <span class="tip-icon">⏱️</span>
+          <div>
+            <strong>Modelos complexos demoram mais</strong>
+            <p>Peças com muitos detalhes, alta resolução (<code>$fn</code> alto) ou operações booleanas complexas podem
+              levar vários minutos para compilar.</p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-icon">🎛️</span>
+          <div>
+            <strong>Parâmetros automáticos</strong>
+            <p>Adicione anotações nos comentários para gerar controles interativos:<br>
+              <code>altura = 10; // [1:0.5:50]</code> → slider<br>
+              <code>tipo = "a"; // [a, b, c]</code> → dropdown
+            </p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-icon">📚</span>
+          <div>
+            <strong>Biblioteca BOSL2</strong>
+            <p>A biblioteca BOSL2 é carregada automaticamente quando detectada no código. Basta usar
+              <code>include &lt;BOSL2/std.scad&gt;</code> normalmente.</p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-icon">🔍</span>
+          <div>
+            <strong>Dica de performance</strong>
+            <p>Use <code>$fn</code> baixo (16–32) durante o desenvolvimento e aumente para a versão final. Valores como
+              <code>$fn=128</code> podem tornar a compilação muito lenta.</p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-icon">💾</span>
+          <div>
+            <strong>Exporte seu modelo</strong>
+            <p>Após compilar, use o botão <strong>Baixar STL</strong> para salvar o arquivo. O STL pode ser usado em
+              fatiadores como Cura ou PrusaSlicer para impressão 3D.</p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-icon">🖱️</span>
+          <div>
+            <strong>Controles do visualizador</strong>
+            <p>Clique + arraste para girar · Scroll para zoom · Clique direito + arraste para mover a câmera.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ───── Main Layout ───── -->
   <main id="app-main">
