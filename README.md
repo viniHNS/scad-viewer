@@ -6,7 +6,7 @@
 ![Bitbucket open issues](https://img.shields.io/bitbucket/issues/viniHNS/scad-viewer?style=for-the-badge)
 ![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/viniHNS/scad-viewer?style=for-the-badge)
 
-<img src="screenshot.png" alt="SCAD Web Preview">
+<img src="scad.png" alt="SCAD Web Preview">
 
 > Compile e visualize arquivos **OpenSCAD (.scad)** diretamente no navegador usando WebAssembly. Arraste seu arquivo, ajuste parâmetros com sliders e dropdowns interativos, e exporte o modelo 3D como STL — sem instalar nada.
 
